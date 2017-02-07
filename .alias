@@ -1,0 +1,106 @@
+#!/usr/bin/env bash
+
+## add following to your .bashrc file to include custom alias file
+# if [ -f ~/MyBash/.alias ]; then
+#     . ~/MyBash/.alias
+# fi
+
+## bash
+alias bashreload='. ~/.bash_profile'
+alias cls='clear'
+
+## file listing
+alias l='ls -l'
+alias la='ls -a'
+alias lh='ls -lh'
+alias lah='ls -alh'
+alias l.='ls -d .*'
+alias ll.='ls -ld .*'
+
+## secure file remove
+alias rm='rm -i'
+alias rmf='rm -rf'
+
+## human readable sizes for du and df
+alias du='du -h'
+alias df='df -u'
+
+## file permissions
+alias chx='chmod 755'
+alias chr='chmod 644'
+alias chax='chmod a+x'
+
+## bu - Back Up a file. Usage "bck filename.txt"
+function bck {
+    cp $1 ${1}-`date +%Y%m%d%H%M`.backup ;
+}
+
+## networking
+function myip {
+   localIP=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1');
+   externalIP=$(curl https://wtfismyip.com/text -s);
+   echo "local IP:          $localIP";
+   echo "external IP:       $externalIP";
+}
+alias ping='ping -c 5'
+
+## easy moving through directories
+function cd_up() {
+  cd $(printf "%0.s../" $(seq 1 $1 ));
+}
+alias ..='cd_up'
+
+## show parents directory list
+function pwp {
+    local -i depth=0;
+    currentDir=$(pwd);
+    echo -e "\033[0;31m*: $currentDir\033[0m";
+
+    while : ; do
+       depth+=1;
+       currentDir=$(dirname $currentDir);
+       if [ $(( $depth%2 )) -eq 1 ]
+       then
+          echo -e "\033[0;32m$depth: $currentDir\033[0m";
+       else
+          echo -e "\033[0;33m$depth: $currentDir\033[0m";
+       fi
+       [[ $currentDir != "/" ]] || break;
+    done
+}
+
+cdl() {
+    cd "$1";
+    ls;
+}
+
+mkc() {
+    mkdir "$1";
+    cd "$1";
+}
+
+function mybash {
+    echo "file listing, directory navigation, file manipulation"
+    echo "    l               lists files in list"
+    echo "    la              lists all files"
+    echo "    lh              lists files with human readable size values"
+    echo "    lah             lists all files with human readable size values"
+    echo "    l.              lists dot files"
+    echo "    ll.             lists dot files in list"
+    echo ""
+    echo "    rmf <dir>       force rm (use with caution)"
+    echo ""
+    echo "    .. <n>          goes up in path for <n> directories"
+    echo "    pwp             shows list of parents for current directory"
+    echo "    cdl <dir>       changes directory to <dir> and list all files in i"
+    echo "    mkc <dir>       creates <dir> and changes directory to it"
+    echo ""
+    echo "    chx <file>      chmod 755"
+    echo "    chr <file>      chmod 644"
+    echo "    chax <file>     chmod a+x"
+    echo ""
+    echo "    bck <file>      creates backup copy of <file> and adds timetamp and .backup extension"
+    echo ""
+    echo "networking:"
+    echo "    myip            shows my local and public IP address"
+}
