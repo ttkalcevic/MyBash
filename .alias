@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
-## add following to your .bashrc file to include custom alias file
-# if [ -f ~/MyBash/.alias ]; then
-#     . ~/MyBash/.alias
-# fi
-
-## bash
-alias bashreload='. ~/.bash_profile'
 alias cls='clear'
+
+alias reloadshell='. ~/.zshrc'
+
+## secure file remove
+alias rm='rm -i'
+alias rmf='rm -rf'
+
 
 ## file listing
 alias l='ls -l'
@@ -17,23 +17,24 @@ alias lah='ls -alh'
 alias l.='ls -d .*'
 alias ll.='ls -ld .*'
 
-## secure file remove
-alias rm='rm -i'
-alias rmf='rm -rf'
-
-## human readable sizes for du and df
-alias du='du -h'
-alias df='df -u'
 
 ## file permissions
 alias chx='chmod 755'
 alias chr='chmod 644'
 alias chax='chmod a+x'
 
+
 ## bu - Back Up a file. Usage "bck filename.txt"
 function bck {
     cp $1 ${1}-`date +%Y%m%d%H%M`.backup ;
 }
+
+
+## Android
+function adbtype {
+	adb shell input text "$1"
+}
+
 
 ## networking
 function myip {
@@ -44,13 +45,20 @@ function myip {
 }
 alias ping='ping -c 5'
 
+
 ## easy moving through directories
 function cd_up() {
   cd $(printf "%0.s../" $(seq 1 $1 ));
 }
+
 alias ..='cd_up'
 
-## show parents directory list
+alias cdl='cdls'
+function cdls {
+    cd $1
+    ls
+}
+
 function pwp {
     local -i depth=0;
     currentDir=$(pwd);
@@ -67,40 +75,4 @@ function pwp {
        fi
        [[ $currentDir != "/" ]] || break;
     done
-}
-
-cdl() {
-    cd "$1";
-    ls;
-}
-
-mkc() {
-    mkdir "$1";
-    cd "$1";
-}
-
-function mybash {
-    echo "file listing, directory navigation, file manipulation"
-    echo "    l               lists files in list"
-    echo "    la              lists all files"
-    echo "    lh              lists files with human readable size values"
-    echo "    lah             lists all files with human readable size values"
-    echo "    l.              lists dot files"
-    echo "    ll.             lists dot files in list"
-    echo ""
-    echo "    rmf <dir>       force rm (use with caution)"
-    echo ""
-    echo "    .. <n>          goes up in path for <n> directories"
-    echo "    pwp             shows list of parents for current directory"
-    echo "    cdl <dir>       changes directory to <dir> and list all files in i"
-    echo "    mkc <dir>       creates <dir> and changes directory to it"
-    echo ""
-    echo "    chx <file>      chmod 755"
-    echo "    chr <file>      chmod 644"
-    echo "    chax <file>     chmod a+x"
-    echo ""
-    echo "    bck <file>      creates backup copy of <file> and adds timetamp and .backup extension"
-    echo ""
-    echo "networking:"
-    echo "    myip            shows my local and public IP address"
 }
